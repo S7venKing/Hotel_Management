@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Hotel_Management.UI.Models
+{
+    public partial class Room
+    {
+        public Room()
+        {
+            Bookings = new HashSet<Booking>();
+            RoomDevices = new HashSet<RoomDevice>();
+        }
+
+        public int RoomId { get; set; }
+        public string? RoomName { get; set; }
+        public bool? Status { get; set; }
+        public int FloorId { get; set; }
+        public int RoomTypeId { get; set; }
+
+        public virtual Floor Floor { get; set; } = null!;
+        public virtual RoomType RoomType { get; set; } = null!;
+        public virtual ICollection<Booking> Bookings { get; set; }
+        public virtual ICollection<RoomDevice> RoomDevices { get; set; }
+    }
+}
