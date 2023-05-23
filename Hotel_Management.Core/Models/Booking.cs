@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Hotel_Management.UI.Models
+﻿namespace Hotel_Management.UI.Models
 {
     public partial class Booking
     {
@@ -13,8 +10,8 @@ namespace Hotel_Management.UI.Models
         public int? NumberOfDays { get; set; }
         public int? UserId { get; set; }
         public int? ProductId { get; set; }
-        public string? CompanyId { get; set; }
-        public string? DepartmentId { get; set; }
+        public int? CompanyId { get; set; }
+        public int? DepartmentId { get; set; }
 
         public virtual Company? Company { get; set; }
         public virtual Customer? Customer { get; set; }

@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-var connectionString = builder.Configuration.GetConnectionString("HotelManagement");
+var connectionString = builder.Configuration.GetConnectionString("DefaultString");
 builder.Services.AddDbContext<HotelManagementContext>(options =>
     options.UseSqlServer(connectionString));
 

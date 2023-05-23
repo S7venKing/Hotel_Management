@@ -9,6 +9,11 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         private readonly HotelManagementContext? _context;
         private ICompanyRepository _companyRepository;
 
+        public UnitOfWork(HotelManagementContext context = null)
+        {
+            _context = context ?? new HotelManagementContext();
+        }
+
         public ICompanyRepository CompanyRepository => _companyRepository ?? new CompanyRepository(_context);
 
         public void Dispose()

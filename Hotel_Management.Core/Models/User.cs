@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Hotel_Management.UI.Models
+﻿namespace Hotel_Management.UI.Models
 {
     public partial class User
     {
@@ -14,8 +11,8 @@ namespace Hotel_Management.UI.Models
         public string? FullName { get; set; }
         public string? UserName { get; set; }
         public string? Password { get; set; }
-        public string? CompanyId { get; set; }
-        public string? DepartmentId { get; set; }
+        public int? CompanyId { get; set; }
+        public int? DepartmentId { get; set; }
         public bool? IsGroup { get; set; }
         public bool? Disable { get; set; }
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Hotel_Management.UI.Models
+﻿namespace Hotel_Management.UI.Models
 {
     public partial class Department
     {
@@ -11,13 +8,13 @@ namespace Hotel_Management.UI.Models
             Users = new HashSet<User>();
         }
 
-        public string DepartmentId { get; set; } = null!;
+        public int DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Fax { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
-        public string? CompanyId { get; set; }
+        public int? CompanyId { get; set; }
 
         public virtual Company? Company { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }

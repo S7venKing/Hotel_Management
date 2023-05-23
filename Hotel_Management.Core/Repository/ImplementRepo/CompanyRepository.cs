@@ -9,5 +9,6 @@ namespace Hotel_Management.Core.Repository.ImplementRepo
         public CompanyRepository(HotelManagementContext context) : base(context)
         {
         }
+
     }
 }
