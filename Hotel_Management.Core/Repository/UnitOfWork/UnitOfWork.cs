@@ -8,6 +8,8 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
     {
         private readonly HotelManagementContext? _context;
         private ICompanyRepository _companyRepository;
+        private IDepartmentRepository _departmentRepository;
+
 
         public UnitOfWork(HotelManagementContext context = null)
         {
@@ -15,6 +17,8 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         }
 
         public ICompanyRepository CompanyRepository => _companyRepository ?? new CompanyRepository(_context);
+
+        public IDepartmentRepository DepartmentRepository => _departmentRepository ?? new DepartmentRepository(_context);
 
         public void Dispose()
         {

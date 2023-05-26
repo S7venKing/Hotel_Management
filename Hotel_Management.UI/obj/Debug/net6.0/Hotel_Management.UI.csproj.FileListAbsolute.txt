@@ -271,3 +271,11 @@ E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\obj\Debug\net6.0\r
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\obj\Debug\net6.0\Hotel_Management.UI.pdb
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\obj\Debug\net6.0\Hotel_Management.UI.genruntimeconfig.cache
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\obj\Debug\net6.0\ref\Hotel_Management.UI.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\obj\Debug\net6.0\Hotel_Management.UI.MvcApplicationPartsAssemblyInfo.cs
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.UI.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.Extensions.FileProviders.Embedded.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll

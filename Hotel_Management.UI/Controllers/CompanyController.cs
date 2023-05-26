@@ -6,15 +6,29 @@ namespace Hotel_Management.UI.Controllers
 {
     public class CompanyController : Controller
     {
+        public const int ITEMS_PER_PAGE = 5;
         private IUnitOfWork _unitOfWork;
 
         public CompanyController(IUnitOfWork _unitOfWork)
         {
             this._unitOfWork = _unitOfWork;
         }
-        public IActionResult Index()
+        public IActionResult Index([Bind(Prefix = "page")] int pageNumber)
         {
-            var data = _unitOfWork.CompanyRepository.GetAll();
+            if (pageNumber == 0)
+                pageNumber = 1;
+            var CompanyData = _unitOfWork.CompanyRepository.GetAll();
+
+            var totalItems = CompanyData.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / ITEMS_PER_PAGE);
+            if (pageNumber > totalPages)
+                return RedirectToAction("Index", "Company", new { page = totalPages });
+            var data = CompanyData
+            .Skip(ITEMS_PER_PAGE * (pageNumber - 1))
+            .Take(ITEMS_PER_PAGE)
+            .ToList();
+            ViewData["pageNumber"] = pageNumber;
+            ViewData["totalPages"] = totalPages;
             return View(data);
         }
 

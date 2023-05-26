@@ -9,8 +9,16 @@
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
+      "Id": "E:\\SU2023\\PRN211\\Project\\Hotel_Management\\Hotel_Management.UI\\wwwroot\\css\\style.css",
+      "PackagePath": "staticwebassets\\css\\style.css"
+    },
+    {
       "Id": "E:\\SU2023\\PRN211\\Project\\Hotel_Management\\Hotel_Management.UI\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "E:\\SU2023\\PRN211\\Project\\Hotel_Management\\Hotel_Management.UI\\wwwroot\\js\\app.js",
+      "PackagePath": "staticwebassets\\js\\app.js"
     },
     {
       "Id": "E:\\SU2023\\PRN211\\Project\\Hotel_Management\\Hotel_Management.UI\\wwwroot\\js\\site.js",
