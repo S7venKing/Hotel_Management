@@ -83,7 +83,7 @@ namespace Hotel_Management.UI.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            return View();
         }
 
         public IActionResult Create()
@@ -115,7 +115,7 @@ namespace Hotel_Management.UI.Controllers
             {
                 return View();
             }
-            return View(company);
+            return View();
         }
 
         public IActionResult Delete(int? id)

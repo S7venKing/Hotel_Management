@@ -2,6 +2,7 @@
 using Hotel_Management.UI.Areas.Admin.Models;
 using Hotel_Management.UI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hotel_Management.UI.Areas.Admin.Controllers
 {
@@ -9,20 +10,40 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
     public class DepartmentController : Controller
     {
         private IUnitOfWork _unitOfWork;
-
+        public const int ITEMS_PER_PAGE = 5;
 
         public DepartmentController(IUnitOfWork _unitOfWork)
         {
             this._unitOfWork = _unitOfWork;
         }
 
-        // GET: Admin/Department
-        public IActionResult Index()
+        public IActionResult Index([Bind(Prefix = "page")] int pageNumber, string? searchString)
         {
-            //var hotelManagementContext = _context.Departments.Include(d => d.Company);
-            //return View(await hotelManagementContext.ToListAsync());
+            if (pageNumber == 0)
+                pageNumber = 1;
             var data = _unitOfWork.DepartmentRepository.GetAll();
-            return View(data);
+            ViewBag.SearchString = searchString;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                data = _unitOfWork.DepartmentRepository.SearchDepartmentByName(searchString);
+
+            }
+            foreach (var department in data)
+            {
+                department.Company = _unitOfWork.CompanyRepository.Find((int)department.CompanyId);
+            }
+            var totalItems = data.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / ITEMS_PER_PAGE);
+            if (pageNumber > totalPages)
+                return RedirectToAction("Index", "Department", new { page = totalPages });
+            var departments = data
+            .Skip(ITEMS_PER_PAGE * (pageNumber - 1))
+            .Take(ITEMS_PER_PAGE)
+            .ToList();
+            ViewData["pageNumber"] = pageNumber;
+            ViewData["totalPages"] = totalPages;
+
+            return View(departments);
         }
 
         // GET: Admin/Department/Details/5
@@ -31,6 +52,7 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
             if (id.HasValue)
             {
                 var data = _unitOfWork.DepartmentRepository.Find(id.Value);
+                data.Company = _unitOfWork.CompanyRepository.Find((int)data.CompanyId);
                 return View(data);
             }
             return RedirectToAction("Index");
@@ -39,6 +61,8 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
         // GET: Admin/Department/Create
         public IActionResult Create()
         {
+            var company = _unitOfWork.CompanyRepository.GetAll();
+            ViewBag.Company = new SelectList(company, "CompanyId", "CompanyName");
             return View();
         }
 
@@ -70,103 +94,75 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
             {
                 return View();
             }
-            return View(department);
+            return View();
         }
 
-        //// GET: Admin/Department/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null || _context.Departments == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Admin/Department/Edit/5
+        public IActionResult Edit(int? id)
+        {
+            if (id.HasValue)
+            {
+                var departments = _unitOfWork.DepartmentRepository.Find(id.Value);
+                if (departments != null)
+                {
+                    var company = _unitOfWork.CompanyRepository.GetAll();
+                    ViewBag.Company = new SelectList(company, "CompanyId", "CompanyName");
+                    return View(departments);
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
 
-        //    var department = await _context.Departments.FindAsync(id);
-        //    if (department == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    ViewData["CompanyId"] = new SelectList(_context.Companies, "CompanyId", "CompanyId", department.CompanyId);
-        //    return View(department);
-        //}
 
-        //// POST: Admin/Department/Edit/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("DepartmentId,DepartmentName,PhoneNumber,Fax,Email,Address,CompanyId")] Department department)
-        //{
-        //    if (id != department.DepartmentId)
-        //    {
-        //        return NotFound();
-        //    }
+        // POST: Admin/Department/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int? DepartmentId, DepartmentModelView department)
+        {
+            if (DepartmentId != department.DepartmentId)
+            {
+                return NotFound();
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(department);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!DepartmentExists(department.DepartmentId))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["CompanyId"] = new SelectList(_context.Companies, "CompanyId", "CompanyId", department.CompanyId);
-        //    return View(department);
-        //}
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (DepartmentId.HasValue)
+                    {
+                        _unitOfWork.DepartmentRepository.Update(new Department()
+                        {
+                            DepartmentId = department.DepartmentId,
+                            DepartmentName = department.DepartmentName,
+                            PhoneNumber = department.PhoneNumber,
+                            Address = department.Address,
+                            Fax = department.Fax,
+                            Email = department.Email,
+                            CompanyId = department.CompanyId,
+                        });
+                        _unitOfWork.SaveChanges();
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
 
-        //// GET: Admin/Department/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.Departments == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var department = await _context.Departments
-        //        .Include(d => d.Company)
-        //        .FirstOrDefaultAsync(m => m.DepartmentId == id);
-        //    if (department == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(department);
-        //}
-
-        //// POST: Admin/Department/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.Departments == null)
-        //    {
-        //        return Problem("Entity set 'HotelManagementContext.Departments'  is null.");
-        //    }
-        //    var department = await _context.Departments.FindAsync(id);
-        //    if (department != null)
-        //    {
-        //        _context.Departments.Remove(department);
-        //    }
-
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        //private bool DepartmentExists(int id)
-        //{
-        //    return (_context.Departments?.Any(e => e.DepartmentId == id)).GetValueOrDefault();
-        //}
+        // GET: Admin/Department/Delete/5
+        public IActionResult Delete(int? id)
+        {
+            if (id.HasValue)
+            {
+                _unitOfWork.DepartmentRepository.Delete(id.Value);
+                _unitOfWork.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

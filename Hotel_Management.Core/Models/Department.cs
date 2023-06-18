@@ -1,4 +1,6 @@
-﻿namespace Hotel_Management.UI.Models
+﻿using System.ComponentModel;
+
+namespace Hotel_Management.UI.Models
 {
     public partial class Department
     {
@@ -14,8 +16,9 @@
         public string? Fax { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
-        public int? CompanyId { get; set; }
 
+        [DisplayName("Company")]
+        public int? CompanyId { get; set; }
         public virtual Company? Company { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<User> Users { get; set; }

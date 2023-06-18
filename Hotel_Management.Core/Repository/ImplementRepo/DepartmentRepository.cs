@@ -9,5 +9,12 @@ namespace Hotel_Management.Core.Repository.ImplementRepo
         public DepartmentRepository(HotelManagementContext context) : base(context)
         {
         }
+
+        public IEnumerable<Department> SearchDepartmentByName(string name)
+        {
+            return context.Departments
+          .Where(d => d.DepartmentName.Contains(name))
+          .ToList();
+        }
     }
 }
