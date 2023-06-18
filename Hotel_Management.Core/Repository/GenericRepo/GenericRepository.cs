@@ -53,5 +53,10 @@ namespace Hotel_Management.Core.Repository.GenericRepo
         {
             throw new NotImplementedException();
         }
+        public IEnumerable<TEntity> SearchByName(Func<TEntity, string> nameSelector, string name)
+        {
+            var entities = dbSet.ToList();
+            return entities.Where(entity => nameSelector(entity).Contains(name)).ToList();
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
             ViewBag.SearchString = searchString;
             if (!String.IsNullOrEmpty(searchString))
             {
-                data = _unitOfWork.DepartmentRepository.SearchDepartmentByName(searchString);
+                data = _unitOfWork.DepartmentRepository.SearchByName(x => x.DepartmentName, searchString);
 
             }
             foreach (var department in data)

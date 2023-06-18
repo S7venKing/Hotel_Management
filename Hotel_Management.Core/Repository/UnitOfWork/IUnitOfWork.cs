@@ -6,6 +6,7 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
     {
         ICompanyRepository CompanyRepository { get; }
         IDepartmentRepository DepartmentRepository { get; }
+        IFloorRepository FloorRepository { get; }
 
 
         int SaveChanges();

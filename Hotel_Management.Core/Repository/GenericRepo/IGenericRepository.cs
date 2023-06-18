@@ -21,5 +21,6 @@
         IEnumerable<TEntity> GetAll();
 
         TEntity Find(int id);
+        IEnumerable<TEntity> SearchByName(Func<TEntity, string> nameSelector, string name);
     }
 }

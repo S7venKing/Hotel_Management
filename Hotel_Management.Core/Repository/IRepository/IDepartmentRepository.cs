@@ -5,6 +5,5 @@ namespace Hotel_Management.Core.Repository.IRepository
 {
     public interface IDepartmentRepository : IGenericRepository<Department>
     {
-        IEnumerable<Department> SearchDepartmentByName(string name);
     }
 }
