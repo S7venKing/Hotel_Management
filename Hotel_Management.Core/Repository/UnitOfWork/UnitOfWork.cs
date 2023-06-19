@@ -10,6 +10,7 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         private ICompanyRepository _companyRepository;
         private IDepartmentRepository _departmentRepository;
         private IFloorRepository _floorRepository;
+        private IRoomTypeRepository _roomTypeRepository;
 
 
         public UnitOfWork(HotelManagementContext context = null)
@@ -22,6 +23,8 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         public IDepartmentRepository DepartmentRepository => _departmentRepository ?? new DepartmentRepository(_context);
 
         public IFloorRepository FloorRepository => _floorRepository ?? new FloorRepository(_context);
+
+        public IRoomTypeRepository RoomTypeRepository => _roomTypeRepository ?? new RoomTypeRepository(_context);
 
         public void Dispose()
         {

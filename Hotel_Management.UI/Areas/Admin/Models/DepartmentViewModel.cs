@@ -1,6 +1,6 @@
 ﻿namespace Hotel_Management.UI.Areas.Admin.Models
 {
-    public class DepartmentModelView
+    public class DepartmentViewModel
     {
         public int DepartmentId { get; set; }
         public string DepartmentName { get; set; }

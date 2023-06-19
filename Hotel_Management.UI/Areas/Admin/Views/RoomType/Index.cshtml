@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Hotel_Management.UI.Models.Floor>
+﻿@model IEnumerable<Hotel_Management.UI.Models.RoomType>
 
 @{
     ViewData["Title"] = "Index";
@@ -26,7 +26,16 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.FloorName)
+                                @Html.DisplayNameFor(model => model.RoomTypeName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Price)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuantityPeople)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuantityBed)
                             </th>
                             <th></th>
                         </tr>
@@ -36,12 +45,21 @@
                         {
                             <tr>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.FloorName)
+                                    @Html.DisplayFor(modelItem => item.RoomTypeName)
                                 </td>
                                 <td>
-                                    <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.FloorId">Update <i class="bi bi-pencil"></i></a>
-                                    <a class="btn btn-outline-warning" asp-action="Details" asp-route-id="@item.FloorId">Details <i class="bi bi-eye"></i></a>
-                                    <a class="btn btn-outline-danger" onclick="return confirm('Are you sure to detele');" asp-action="Delete" asp-route-id="@item.FloorId">Delete <i class="bi bi-trash3"></i></a>
+                                    @Html.DisplayFor(modelItem => item.Price)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.QuantityPeople)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.QuantityBed)
+                                </td>
+                                <td>
+                                    <a class="btn btn-out-success" asp-action="Edit" asp-route-id="@item.RoomTypeId">Edit</a> |
+                                    <a class="btn btn-out-warning" asp-action="Details" asp-route-id="@item.RoomTypeId">Details</a> |
+                                    <a class="btn btn-out-danger" onclick="return confirm('Are you sure to detele');" asp-action="Delete" asp-route-id="@item.RoomTypeId">Delete</a>
                                 </td>
                             </tr>
                         }

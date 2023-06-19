@@ -71,7 +71,7 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(DepartmentModelView department)
+        public IActionResult Create(DepartmentViewModel department)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int? DepartmentId, DepartmentModelView department)
+        public IActionResult Edit(int? DepartmentId, DepartmentViewModel department)
         {
             if (DepartmentId != department.DepartmentId)
             {

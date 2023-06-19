@@ -29,7 +29,7 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
             var totalItems = Data.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / ITEMS_PER_PAGE);
             if (pageNumber > totalPages)
-                return RedirectToAction("Index", "Company", new { page = totalPages });
+                return RedirectToAction("Index", "Floor", new { page = totalPages });
             var data = Data
             .Skip(ITEMS_PER_PAGE * (pageNumber - 1))
             .Take(ITEMS_PER_PAGE)
