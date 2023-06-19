@@ -11,7 +11,11 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         private IDepartmentRepository _departmentRepository;
         private IFloorRepository _floorRepository;
         private IRoomTypeRepository _roomTypeRepository;
-
+        private ICustomerRepository _customerRepository;
+        private IBookingRepository _bookingRepository;
+        private IProductRepository _productRepository;
+        private IRoomRepository _roomRepository;
+        private IDeviceRepository _deviceRepository;
 
         public UnitOfWork(HotelManagementContext context = null)
         {
@@ -25,6 +29,16 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         public IFloorRepository FloorRepository => _floorRepository ?? new FloorRepository(_context);
 
         public IRoomTypeRepository RoomTypeRepository => _roomTypeRepository ?? new RoomTypeRepository(_context);
+
+        public IBookingRepository BookingRepository => _bookingRepository ?? new BookingRepository(_context);
+
+        public IProductRepository ProductRepository => _productRepository ?? new ProductRepository(_context);
+
+        public IDeviceRepository DeviceRepository => _deviceRepository ?? new DeviceRepository(_context);
+
+        public IRoomRepository RoomRepository => _roomRepository ?? new RoomRepository(_context);
+
+        public ICustomerRepository CustomerRepository => _customerRepository ?? new CustomerRepository(_context);
 
         public void Dispose()
         {

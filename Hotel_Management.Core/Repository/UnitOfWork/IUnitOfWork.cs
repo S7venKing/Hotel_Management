@@ -8,6 +8,11 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         IDepartmentRepository DepartmentRepository { get; }
         IFloorRepository FloorRepository { get; }
         IRoomTypeRepository RoomTypeRepository { get; }
+        IBookingRepository BookingRepository { get; }
+        IProductRepository ProductRepository { get; }
+        IDeviceRepository DeviceRepository { get; }
+        IRoomRepository RoomRepository { get; }
+        ICustomerRepository CustomerRepository { get; }
 
 
         int SaveChanges();

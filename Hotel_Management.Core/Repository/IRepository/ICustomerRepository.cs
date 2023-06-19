@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Hotel_Management.Core.Repository.GenericRepo;
+using Hotel_Management.UI.Models;
 
 namespace Hotel_Management.Core.Repository.IRepository
 {
-    internal class ICustomerRepository
+    public interface ICustomerRepository : IGenericRepository<Customer>
     {
     }
 }
