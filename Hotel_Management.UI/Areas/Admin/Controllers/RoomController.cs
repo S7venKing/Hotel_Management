@@ -1,103 +1,134 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Hotel_Management.Core.Repository.UnitOfWork;
+using Hotel_Management.UI.Areas.Admin.Models;
+using Hotel_Management.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Hotel_Management.UI.Models;
 
 namespace Hotel_Management.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class RoomController : Controller
     {
-        private readonly HotelManagementContext _context;
+        private IUnitOfWork _unitOfWork;
+        public const int ITEMS_PER_PAGE = 5;
 
-        public RoomController(HotelManagementContext context)
+        public RoomController(IUnitOfWork _unitOfWork)
         {
-            _context = context;
+            this._unitOfWork = _unitOfWork;
         }
 
-        // GET: Admin/Room
-        public async Task<IActionResult> Index()
+        public IActionResult Index([Bind(Prefix = "page")] int pageNumber, string? searchString)
         {
-            var hotelManagementContext = _context.Rooms.Include(r => r.Floor).Include(r => r.RoomType);
-            return View(await hotelManagementContext.ToListAsync());
-        }
+            if (pageNumber == 0)
+                pageNumber = 1;
 
-        // GET: Admin/Room/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Rooms == null)
+            var data = _unitOfWork.RoomRepository.GetAll();
+            ViewBag.SearchString = searchString;
+
+            if (!String.IsNullOrEmpty(searchString))
             {
-                return NotFound();
-            }
+                data = _unitOfWork.RoomRepository.SearchByName(x => x.RoomName, searchString);
 
-            var room = await _context.Rooms
-                .Include(r => r.Floor)
-                .Include(r => r.RoomType)
-                .FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null)
+            }
+            foreach (var room in data)
             {
-                return NotFound();
+                room.RoomType = _unitOfWork.RoomTypeRepository.Find(room.RoomTypeId);
+                room.Floor = _unitOfWork.FloorRepository.Find(room.FloorId);
             }
+            var totalItems = data.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / ITEMS_PER_PAGE);
+            if (pageNumber > totalPages)
+                return RedirectToAction("Index", "Room", new { page = totalPages });
+            var departments = data
+            .Skip(ITEMS_PER_PAGE * (pageNumber - 1))
+            .Take(ITEMS_PER_PAGE)
+            .ToList();
+            ViewData["pageNumber"] = pageNumber;
+            ViewData["totalPages"] = totalPages;
 
-            return View(room);
+            return View(departments);
         }
 
-        // GET: Admin/Room/Create
+        // GET: Admin/Department/Details/5
+        public IActionResult Details(int? id)
+        {
+            if (id.HasValue)
+            {
+                var data = _unitOfWork.RoomRepository.Find(id.Value);
+                data.RoomType = _unitOfWork.RoomTypeRepository.Find(data.RoomTypeId);
+                data.Floor = _unitOfWork.FloorRepository.Find(data.FloorId);
+                return View(data);
+            }
+            return RedirectToAction("Index");
+        }
+
+        // GET: Admin/Department/Create
         public IActionResult Create()
         {
-            ViewData["FloorId"] = new SelectList(_context.Floors, "FloorId", "FloorId");
-            ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeId");
+            var roomtype = _unitOfWork.RoomTypeRepository.GetAll();
+            var floor = _unitOfWork.FloorRepository.GetAll();
+            ViewBag.RoomType = new SelectList(roomtype, "RoomTypeId", "RoomTypeName");
+            ViewBag.Floor = new SelectList(floor, "FloorId", "FloorName");
             return View();
         }
 
-        // POST: Admin/Room/Create
+        // POST: Admin/Department/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RoomId,RoomName,Status,FloorId,RoomTypeId")] Room room)
+        public IActionResult Create(RoomViewModel room)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(room);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _unitOfWork.RoomRepository.Add(new Room()
+                    {
+                        RoomId = room.RoomId,
+                        RoomName = room.RoomName,
+                        Status = false,
+                        FloorId = room.FloorId,
+                        RoomTypeId = room.RoomTypeId,
+                    });
+                    _unitOfWork.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewData["FloorId"] = new SelectList(_context.Floors, "FloorId", "FloorId", room.FloorId);
-            ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeId", room.RoomTypeId);
-            return View(room);
+            catch
+            {
+                return View();
+            }
+            return View();
         }
 
-        // GET: Admin/Room/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Admin/Department/Edit/5
+        public IActionResult Edit(int? id)
         {
-            if (id == null || _context.Rooms == null)
+            if (id.HasValue)
             {
-                return NotFound();
+                var room = _unitOfWork.RoomRepository.Find(id.Value);
+                if (room != null)
+                {
+                    var roomtype = _unitOfWork.RoomTypeRepository.GetAll();
+                    var floor = _unitOfWork.FloorRepository.GetAll();
+                    ViewBag.RoomType = new SelectList(roomtype, "RoomTypeId", "RoomTypeName");
+                    ViewBag.Floor = new SelectList(floor, "FloorId", "FloorName");
+                    return View(room);
+                }
             }
-
-            var room = await _context.Rooms.FindAsync(id);
-            if (room == null)
-            {
-                return NotFound();
-            }
-            ViewData["FloorId"] = new SelectList(_context.Floors, "FloorId", "FloorId", room.FloorId);
-            ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeId", room.RoomTypeId);
-            return View(room);
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: Admin/Room/Edit/5
+
+        // POST: Admin/Department/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RoomId,RoomName,Status,FloorId,RoomTypeId")] Room room)
+        public IActionResult Edit(int? RoomId, RoomViewModel room)
         {
-            if (id != room.RoomId)
+            if (RoomId != room.RoomId)
             {
                 return NotFound();
             }
@@ -106,69 +137,37 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(room);
-                    await _context.SaveChangesAsync();
+                    if (RoomId.HasValue)
+                    {
+                        _unitOfWork.RoomRepository.Update(new Room()
+                        {
+                            RoomId = room.RoomId,
+                            RoomName = room.RoomName,
+                            Status = room.Status,
+                            FloorId = room.FloorId,
+                            RoomTypeId = room.RoomTypeId,
+                        });
+                        _unitOfWork.SaveChanges();
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (InvalidOperationException ex)
                 {
-                    if (!RoomExists(room.RoomId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FloorId"] = new SelectList(_context.Floors, "FloorId", "FloorId", room.FloorId);
-            ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeId", room.RoomTypeId);
-            return View(room);
+            return View();
         }
 
-        // GET: Admin/Room/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Admin/Department/Delete/5
+        public IActionResult Delete(int? id)
         {
-            if (id == null || _context.Rooms == null)
+            if (id.HasValue)
             {
-                return NotFound();
+                _unitOfWork.RoomRepository.Delete(id.Value);
+                _unitOfWork.SaveChanges();
             }
-
-            var room = await _context.Rooms
-                .Include(r => r.Floor)
-                .Include(r => r.RoomType)
-                .FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null)
-            {
-                return NotFound();
-            }
-
-            return View(room);
-        }
-
-        // POST: Admin/Room/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Rooms == null)
-            {
-                return Problem("Entity set 'HotelManagementContext.Rooms'  is null.");
-            }
-            var room = await _context.Rooms.FindAsync(id);
-            if (room != null)
-            {
-                _context.Rooms.Remove(room);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool RoomExists(int id)
-        {
-          return (_context.Rooms?.Any(e => e.RoomId == id)).GetValueOrDefault();
         }
     }
 }

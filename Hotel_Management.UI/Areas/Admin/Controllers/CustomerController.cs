@@ -1,48 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Hotel_Management.Core.Repository.UnitOfWork;
+using Hotel_Management.UI.Areas.Admin.Models;
 using Hotel_Management.UI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hotel_Management.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CustomerController : Controller
     {
-        private readonly HotelManagementContext _context;
+        public const int ITEMS_PER_PAGE = 5;
+        private IUnitOfWork _unitOfWork;
 
-        public CustomerController(HotelManagementContext context)
+        public CustomerController(IUnitOfWork _unitOfWork)
         {
-            _context = context;
+            this._unitOfWork = _unitOfWork;
         }
 
         // GET: Admin/Customer
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([Bind(Prefix = "page")] int pageNumber, string? searchString)
         {
-              return _context.Customers != null ? 
-                          View(await _context.Customers.ToListAsync()) :
-                          Problem("Entity set 'HotelManagementContext.Customers'  is null.");
+            if (pageNumber == 0)
+                pageNumber = 1;
+            var Data = _unitOfWork.CustomerRepository.GetAll();
+            ViewBag.SearchString = searchString;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                Data = _unitOfWork.CustomerRepository.SearchByName(x => x.CustomerName, searchString);
+            }
+            var totalItems = Data.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / ITEMS_PER_PAGE);
+            if (pageNumber > totalPages)
+                return RedirectToAction("Index", "Customer", new { page = totalPages });
+            var data = Data
+                .Skip(ITEMS_PER_PAGE * (pageNumber - 1))
+                .Take(ITEMS_PER_PAGE)
+                .ToList();
+            ViewData["pageNumber"] = pageNumber;
+            ViewData["totalPages"] = totalPages;
+            return View(data);
         }
 
         // GET: Admin/Customer/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id.HasValue)
             {
-                return NotFound();
+                var data = _unitOfWork.CustomerRepository.Find(id.Value);
+                return View(data);
             }
-
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
+            return RedirectToAction("Index");
         }
 
         // GET: Admin/Customer/Create
@@ -56,31 +62,44 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerId,CustomerName,CitizenId,PhoneNumber,Email,Address")] Customer customer)
+        public async Task<IActionResult> Create([Bind("CustomerId,CustomerName,CitizenId,PhoneNumber,Email,Address")] CustomerViewModel customer)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _unitOfWork.CustomerRepository.Add(new Customer()
+                    {
+                        CustomerId = customer.CustomerId,
+                        CustomerName = customer.CustomerName,
+                        Email = customer.Email,
+                        Address = customer.Address,
+                        CitizenId = customer.CitizenId,
+                        PhoneNumber = customer.PhoneNumber,
+                    });
+                    _unitOfWork.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            return View(customer);
+            catch
+            {
+                return View();
+            }
+            return View();
         }
 
         // GET: Admin/Customer/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id.HasValue)
             {
-                return NotFound();
+                var company = _unitOfWork.CustomerRepository.Find(id.Value);
+                if (company != null)
+                {
+                    return View(company);
+                }
             }
-
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            return View(customer);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: Admin/Customer/Edit/5
@@ -88,76 +107,44 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,CustomerName,CitizenId,PhoneNumber,Email,Address")] Customer customer)
+        public async Task<IActionResult> Edit(int? CustomerId, [Bind("CustomerId,CustomerName,CitizenId,PhoneNumber,Email,Address")] CustomerViewModel customer)
         {
-            if (id != customer.CustomerId)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    if (CustomerId.HasValue)
+                    {
+                        _unitOfWork.CustomerRepository.Update(new Customer()
+                        {
+                            CustomerId = customer.CustomerId,
+                            CustomerName = customer.CustomerName,
+                            Email = customer.Email,
+                            Address = customer.Address,
+                            CitizenId = customer.CitizenId,
+                            PhoneNumber = customer.PhoneNumber,
+                        });
+                        _unitOfWork.SaveChanges();
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (InvalidOperationException ex)
                 {
-                    if (!CustomerExists(customer.CustomerId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(customer);
+            return View();
         }
 
         // GET: Admin/Customer/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id.HasValue)
             {
-                return NotFound();
+                _unitOfWork.CustomerRepository.Delete(id.Value);
+                _unitOfWork.SaveChanges();
             }
-
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
-        }
-
-        // POST: Admin/Customer/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Customers == null)
-            {
-                return Problem("Entity set 'HotelManagementContext.Customers'  is null.");
-            }
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CustomerExists(int id)
-        {
-          return (_context.Customers?.Any(e => e.CustomerId == id)).GetValueOrDefault();
         }
     }
 }
