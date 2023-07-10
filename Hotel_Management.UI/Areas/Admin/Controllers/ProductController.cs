@@ -1,163 +1,133 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Hotel_Management.Core.Repository.UnitOfWork;
+using Hotel_Management.UI.Areas.Admin.Models;
 using Hotel_Management.UI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hotel_Management.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class ProductController : Controller
     {
-        private readonly HotelManagementContext _context;
+        public const int ITEMS_PER_PAGE = 5;
+        private IUnitOfWork _unitOfWork;
 
-        public ProductController(HotelManagementContext context)
+        public ProductController(IUnitOfWork _unitOfWork)
         {
-            _context = context;
+            this._unitOfWork = _unitOfWork;
         }
 
-        // GET: Admin/Product
-        public async Task<IActionResult> Index()
+        public IActionResult Index([Bind(Prefix = "page")] int pageNumber, string? searchString)
         {
-              return _context.Products != null ? 
-                          View(await _context.Products.ToListAsync()) :
-                          Problem("Entity set 'HotelManagementContext.Products'  is null.");
-        }
-
-        // GET: Admin/Product/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Products == null)
+            if (pageNumber == 0)
+                pageNumber = 1;
+            var Data = _unitOfWork.ProductRepository.GetAll();
+            ViewBag.SearchString = searchString;
+            if (!String.IsNullOrEmpty(searchString))
             {
-                return NotFound();
+                Data = _unitOfWork.ProductRepository.SearchByName(x => x.ProductName, searchString);
             }
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            var totalItems = Data.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / ITEMS_PER_PAGE);
+            if (pageNumber > totalPages)
+                return RedirectToAction("Index", "Product", new { page = totalPages });
+            var data = Data
+            .Skip(ITEMS_PER_PAGE * (pageNumber - 1))
+            .Take(ITEMS_PER_PAGE)
+            .ToList();
+            ViewData["pageNumber"] = pageNumber;
+            ViewData["totalPages"] = totalPages;
+            return View(data);
         }
 
-        // GET: Admin/Product/Create
+        public IActionResult Details(int? id)
+        {
+            if (id.HasValue)
+            {
+                var data = _unitOfWork.ProductRepository.Find(id.Value);
+                return View(data);
+            }
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Edit(int? id)
+        {
+            if (id.HasValue)
+            {
+                var company = _unitOfWork.ProductRepository.Find(id.Value);
+                if (company != null)
+                {
+                    return View(company);
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int? ProductId, ProductViewModel product)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (ProductId.HasValue)
+                    {
+                        _unitOfWork.ProductRepository.Update(new Product()
+                        {
+                            ProductId = product.ProductId,
+                            ProductName = product.ProductName,
+                            Price = product.Price,
+                        });
+                        _unitOfWork.SaveChanges();
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/Product/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,Price")] Product product)
+        public IActionResult Create(ProductViewModel product)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(product);
-        }
-
-        // GET: Admin/Product/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
-        }
-
-        // POST: Admin/Product/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,Price")] Product product)
-        {
-            if (id != product.ProductId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.ProductId))
+                    _unitOfWork.ProductRepository.Add(new Product()
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        Price = product.Price,
+                    });
+                    _unitOfWork.SaveChanges();
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            catch
+            {
+                return View();
+            }
+            return View();
         }
 
-        // GET: Admin/Product/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id.HasValue)
             {
-                return NotFound();
+                _unitOfWork.ProductRepository.Delete(id.Value);
+                _unitOfWork.SaveChanges();
             }
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
-        }
-
-        // POST: Admin/Product/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Products == null)
-            {
-                return Problem("Entity set 'HotelManagementContext.Products'  is null.");
-            }
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductExists(int id)
-        {
-          return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
         }
     }
 }
