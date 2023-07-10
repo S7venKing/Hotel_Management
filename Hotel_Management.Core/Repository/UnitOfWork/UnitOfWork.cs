@@ -16,6 +16,7 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         private IProductRepository _productRepository;
         private IRoomRepository _roomRepository;
         private IDeviceRepository _deviceRepository;
+        private IStatusRepository _statusRepository;
 
         public UnitOfWork(HotelManagementContext context = null)
         {
@@ -39,6 +40,8 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         public IRoomRepository RoomRepository => _roomRepository ?? new RoomRepository(_context);
 
         public ICustomerRepository CustomerRepository => _customerRepository ?? new CustomerRepository(_context);
+
+        public IStatusRepository StatusRepository => _statusRepository ?? new StatusRepository(_context);
 
         public void Dispose()
         {

@@ -1,8 +1,26 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
-         <div class="pagetitle">
+@inject Hotel_Management.Core.Repository.UnitOfWork.IUnitOfWork _unitOfWork
+<div class="container h-100">
+    <h1>Hello home</h1>
+    @foreach(var item in _unitOfWork.FloorRepository.GetAll())
+    {
+        <div class="d-flex mb-3">
+            <div class="floor bg-dark text-lg-center text-white">
+                @item.FloorName
+                </div>
+            @foreach (var i in _unitOfWork.RoomRepository.FindRoomByFloor(item.FloorId))
+            {
+                <div class="room bg-@_unitOfWork.StatusRepository.Find((int)i.StatusId).Color text-lg-center text-white ms-2">
+                    @i.RoomName
+                    
+                </div>
+            }
+        </div>
+    }
+</div>
+@*         <div class="pagetitle">
             <h1>Dashboard</h1>
             <nav>
                 <ol class="breadcrumb">
@@ -635,4 +653,4 @@
                 </div><!-- End Right side columns -->
 
             </div>
-        </section>
+        </section>*@

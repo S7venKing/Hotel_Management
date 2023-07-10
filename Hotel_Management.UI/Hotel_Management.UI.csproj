@@ -24,11 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hotel_Management.Core\Hotel_Management.Core.csproj" />
+    <Folder Include="Areas\Admin\Data\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Data\" />
+    <ProjectReference Include="..\Hotel_Management.Core\Hotel_Management.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

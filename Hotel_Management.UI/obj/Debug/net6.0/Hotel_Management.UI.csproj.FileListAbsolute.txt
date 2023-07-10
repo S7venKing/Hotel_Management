@@ -285,3 +285,4 @@ E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\v
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\zh-CN\Humanizer.resources.dll
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\zh-Hans\Humanizer.resources.dll
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\zh-Hant\Humanizer.resources.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.Extensions.Configuration.dll

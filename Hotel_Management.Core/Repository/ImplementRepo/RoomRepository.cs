@@ -9,5 +9,15 @@ namespace Hotel_Management.Core.Repository.ImplementRepo
         public RoomRepository(HotelManagementContext context) : base(context)
         {
         }
+
+        public IEnumerable<Room> FindRoomByFloor(int FloorId)
+        {
+            return context.Rooms.Where(i => i.FloorId == FloorId).ToList();
+        }
+
+        public string GetColorByStatus(int StatusId)
+        {
+            return context.Statuses.Where(i => i.StatusId == StatusId).ToString();
+        }
     }
 }

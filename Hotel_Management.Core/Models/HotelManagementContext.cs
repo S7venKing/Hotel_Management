@@ -26,6 +26,7 @@ namespace Hotel_Management.UI.Models
         public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<RoomDevice> RoomDevices { get; set; } = null!;
         public virtual DbSet<RoomType> RoomTypes { get; set; } = null!;
+        public virtual DbSet<Status> Statuses { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -50,10 +51,6 @@ namespace Hotel_Management.UI.Models
                 entity.Property(e => e.CheckOutDate)
                     .HasColumnType("datetime")
                     .HasColumnName("Check_Out_Date");
-
-                entity.Property(e => e.CompanyId).HasMaxLength(10);
-
-                entity.Property(e => e.DepartmentId).HasMaxLength(10);
 
                 entity.Property(e => e.NumberOfDays).HasColumnName("Number_Of_Days");
 
@@ -92,8 +89,6 @@ namespace Hotel_Management.UI.Models
             {
                 entity.ToTable("Company");
 
-                entity.Property(e => e.CompanyId).HasMaxLength(10);
-
                 entity.Property(e => e.Address).HasMaxLength(100);
 
                 entity.Property(e => e.CompanyName).HasMaxLength(200);
@@ -124,11 +119,7 @@ namespace Hotel_Management.UI.Models
             {
                 entity.ToTable("Department");
 
-                entity.Property(e => e.DepartmentId).HasMaxLength(10);
-
                 entity.Property(e => e.Address).HasMaxLength(500);
-
-                entity.Property(e => e.CompanyId).HasMaxLength(10);
 
                 entity.Property(e => e.DepartmentName).HasMaxLength(200);
 
@@ -182,6 +173,11 @@ namespace Hotel_Management.UI.Models
                     .HasForeignKey(d => d.RoomTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Room_Room_Category");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.Rooms)
+                    .HasForeignKey(d => d.StatusId)
+                    .HasConstraintName("FK_Room_Status");
             });
 
             modelBuilder.Entity<RoomDevice>(entity =>
@@ -214,13 +210,20 @@ namespace Hotel_Management.UI.Models
                 entity.Property(e => e.RoomTypeName).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<Status>(entity =>
+            {
+                entity.ToTable("Status");
+
+                entity.Property(e => e.Color)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StatusName).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("User");
-
-                entity.Property(e => e.CompanyId).HasMaxLength(10);
-
-                entity.Property(e => e.DepartmentId).HasMaxLength(10);
 
                 entity.Property(e => e.FullName).HasMaxLength(50);
 

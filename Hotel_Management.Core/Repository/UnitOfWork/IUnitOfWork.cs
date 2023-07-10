@@ -13,7 +13,7 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         IDeviceRepository DeviceRepository { get; }
         IRoomRepository RoomRepository { get; }
         ICustomerRepository CustomerRepository { get; }
-
+        IStatusRepository StatusRepository { get; }
 
         int SaveChanges();
     }

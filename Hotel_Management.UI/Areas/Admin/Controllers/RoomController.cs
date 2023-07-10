@@ -87,7 +87,7 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
                     {
                         RoomId = room.RoomId,
                         RoomName = room.RoomName,
-                        Status = false,
+                        StatusId = 1,
                         FloorId = room.FloorId,
                         RoomTypeId = room.RoomTypeId,
                     });
@@ -143,7 +143,7 @@ namespace Hotel_Management.UI.Areas.Admin.Controllers
                         {
                             RoomId = room.RoomId,
                             RoomName = room.RoomName,
-                            Status = room.Status,
+                            StatusId = room.StatusId,
                             FloorId = room.FloorId,
                             RoomTypeId = room.RoomTypeId,
                         });

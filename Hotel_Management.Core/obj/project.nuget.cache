@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "FRU8ne7l/a94w1Y3ygIzg/8S8HV7mrWU5+GNbP47itg894eGwwds0/f10eueP1RBxn3Pg1EDx36Uf0GpD9ezdA==",
+  "dgSpecHash": "VmhSJ9rpfm2QMssAW1T+GLGfLxP7kK7gYMch7p0yAqdplJ0xjryXKXBHOEmEUo5QwMa/VciJwG/6GTWxzDPs2g==",
   "success": true,
   "projectFilePath": "E:\\SU2023\\PRN211\\Project\\Hotel_Management\\Hotel_Management.Core\\Hotel_Management.Core.csproj",
   "expectedPackageFiles": [
@@ -16,6 +16,7 @@
     "C:\\Users\\tuann\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\6.0.18\\microsoft.entityframeworkcore.sqlserver.6.0.18.nupkg.sha512",
     "C:\\Users\\tuann\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\6.0.0\\microsoft.extensions.caching.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\tuann\\.nuget\\packages\\microsoft.extensions.caching.memory\\6.0.1\\microsoft.extensions.caching.memory.6.0.1.nupkg.sha512",
+    "C:\\Users\\tuann\\.nuget\\packages\\microsoft.extensions.configuration\\6.0.1\\microsoft.extensions.configuration.6.0.1.nupkg.sha512",
     "C:\\Users\\tuann\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\6.0.0\\microsoft.extensions.configuration.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\tuann\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\6.0.1\\microsoft.extensions.dependencyinjection.6.0.1.nupkg.sha512",
     "C:\\Users\\tuann\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",

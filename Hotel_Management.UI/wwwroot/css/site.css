@@ -1,18 +1,17 @@
-html {
-  font-size: 14px;
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.floor{
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+}
+.room {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}

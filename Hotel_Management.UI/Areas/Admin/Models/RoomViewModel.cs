@@ -4,7 +4,7 @@
     {
         public int RoomId { get; set; }
         public string RoomName { get; set; }
-        public bool Status { get; set; }
+        public int StatusId { get; set; }
         public int FloorId { get; set; }
         public int RoomTypeId { get; set; }
     }

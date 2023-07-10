@@ -28,9 +28,6 @@
                             @Html.DisplayNameFor(model => model.RoomName)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Status)
-                        </th>
-                        <th>
                             @Html.DisplayNameFor(model => model.Floor)
                         </th>
                         <th>
@@ -46,9 +43,9 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.RoomName)
                             </td>
-                            <td class="@(item.Status == false ? "text-danger" : "text-success")">
+                        @*    <td class="@(item.Status == false ? "text-danger" : "text-success")">
                                 @(item.Status == false ? "false" : "true")
-                            </td>
+                            </td>*@
                             <td>
                                 @Html.DisplayFor(modelItem => item.Floor.FloorName)
                             </td>

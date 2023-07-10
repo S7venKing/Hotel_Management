@@ -1,4 +1,7 @@
-﻿namespace Hotel_Management.UI.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace Hotel_Management.UI.Models
 {
     public partial class Booking
     {
