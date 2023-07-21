@@ -1,4 +1,4 @@
-using Hotel_Management.Core.Repository.UnitOfWork;
+﻿using Hotel_Management.Core.Repository.UnitOfWork;
 using Hotel_Management.UI.Areas.Identity.Data;
 using Hotel_Management.UI.Data;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +19,27 @@ builder.Services.AddDefaultIdentity<Hotel_ManagementUIUser>(options => options.S
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddAuthentication()
+    .AddGoogle(googleOptions =>
+    {
+        // Đọc thông tin Authentication:Google từ appsettings.json
+        IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+
+        // Thiết lập ClientID và ClientSecret để truy cập API google
+        googleOptions.ClientId = googleAuthNSection["ClientId"];
+        googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
+        // Cấu hình Url callback lại từ Google (không thiết lập thì mặc định là /signin-google)
+        googleOptions.CallbackPath = "/login-with-google";
+    })              // thêm provider Google và cấu hình
+    .AddFacebook(facebookOptions =>
+    {
+        // Đọc cấu hìnhbuilder.
+        IConfigurationSection facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+        facebookOptions.AppId = facebookAuthNSection["AppId"];
+        facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
+        // Thiết lập đường dẫn Facebook chuyển hướng đến
+        facebookOptions.CallbackPath = "/login-with-facebook";
+    });
 
 var app = builder.Build();
 

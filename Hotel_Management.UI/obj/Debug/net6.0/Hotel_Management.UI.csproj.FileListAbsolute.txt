@@ -286,3 +286,5 @@ E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\z
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\zh-Hans\Humanizer.resources.dll
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\zh-Hant\Humanizer.resources.dll
 E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.Extensions.Configuration.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Facebook.dll
+E:\SU2023\PRN211\Project\Hotel_Management\Hotel_Management.UI\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
