@@ -7,9 +7,7 @@ namespace Hotel_Management.UI.Models
     {
         public Company()
         {
-            Bookings = new HashSet<Booking>();
             Departments = new HashSet<Department>();
-            Users = new HashSet<User>();
         }
 
         public int CompanyId { get; set; }
@@ -19,8 +17,6 @@ namespace Hotel_Management.UI.Models
         public string? Email { get; set; }
         public string? Address { get; set; }
 
-        public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<Department> Departments { get; set; }
-        public virtual ICollection<User> Users { get; set; }
     }
 }

@@ -8,7 +8,6 @@ namespace Hotel_Management.UI.Models
         public Room()
         {
             Bookings = new HashSet<Booking>();
-            RoomDevices = new HashSet<RoomDevice>();
         }
 
         public int RoomId { get; set; }
@@ -21,6 +20,5 @@ namespace Hotel_Management.UI.Models
         public virtual RoomType RoomType { get; set; } = null!;
         public virtual Status? Status { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
-        public virtual ICollection<RoomDevice> RoomDevices { get; set; }
     }
 }

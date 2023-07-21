@@ -9,9 +9,16 @@
     height: 150px;
     border-radius: 10px;
 }
+
 .room {
-    width: 150px;
-    height: 150px;
+    width: 150px !important;
+    height: 150px !important;
     border-radius: 10px;
 }
+.img-product:hover {
+    cursor: pointer
+}
+
+
+
 

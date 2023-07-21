@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Hotel_Management.UI.Models
 {
@@ -20,11 +18,9 @@ namespace Hotel_Management.UI.Models
         public virtual DbSet<Company> Companies { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<Department> Departments { get; set; } = null!;
-        public virtual DbSet<Device> Devices { get; set; } = null!;
         public virtual DbSet<Floor> Floors { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
-        public virtual DbSet<RoomDevice> RoomDevices { get; set; } = null!;
         public virtual DbSet<RoomType> RoomTypes { get; set; } = null!;
         public virtual DbSet<Status> Statuses { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -33,8 +29,8 @@ namespace Hotel_Management.UI.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =DESKTOP-QMKTTBO; database = HotelManagement;uid=sa;pwd=123456;");
+                var ConnectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("DefaultString");
+                optionsBuilder.UseSqlServer(ConnectionString);
             }
         }
 
@@ -44,20 +40,13 @@ namespace Hotel_Management.UI.Models
             {
                 entity.ToTable("Booking");
 
-                entity.Property(e => e.CheckInDate)
+                entity.Property(e => e.CheckInTime)
                     .HasColumnType("datetime")
-                    .HasColumnName("Check_In_Date");
+                    .HasColumnName("Check_In_Time");
 
-                entity.Property(e => e.CheckOutDate)
+                entity.Property(e => e.CheckOutTime)
                     .HasColumnType("datetime")
-                    .HasColumnName("Check_Out_Date");
-
-                entity.Property(e => e.NumberOfDays).HasColumnName("Number_Of_Days");
-
-                entity.HasOne(d => d.Company)
-                    .WithMany(p => p.Bookings)
-                    .HasForeignKey(d => d.CompanyId)
-                    .HasConstraintName("FK_Booking_Company");
+                    .HasColumnName("Check_Out_Time");
 
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Bookings)
@@ -68,11 +57,6 @@ namespace Hotel_Management.UI.Models
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.DepartmentId)
                     .HasConstraintName("FK_Booking_Department");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.Bookings)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK_Booking_Product");
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.Bookings)
@@ -135,13 +119,6 @@ namespace Hotel_Management.UI.Models
                     .HasConstraintName("FK_Department_Company");
             });
 
-            modelBuilder.Entity<Device>(entity =>
-            {
-                entity.ToTable("Device");
-
-                entity.Property(e => e.DeviceName).HasMaxLength(50);
-            });
-
             modelBuilder.Entity<Floor>(entity =>
             {
                 entity.ToTable("Floor");
@@ -154,6 +131,11 @@ namespace Hotel_Management.UI.Models
                 entity.ToTable("Product");
 
                 entity.Property(e => e.ProductName).HasMaxLength(50);
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.BookingId)
+                    .HasConstraintName("FK_Product_Booking");
             });
 
             modelBuilder.Entity<Room>(entity =>
@@ -180,32 +162,11 @@ namespace Hotel_Management.UI.Models
                     .HasConstraintName("FK_Room_Status");
             });
 
-            modelBuilder.Entity<RoomDevice>(entity =>
-            {
-                entity.HasKey(e => new { e.RoomId, e.DeviceId });
-
-                entity.ToTable("Room_Device");
-
-                entity.HasOne(d => d.Device)
-                    .WithMany(p => p.RoomDevices)
-                    .HasForeignKey(d => d.DeviceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Room_Device_Device");
-
-                entity.HasOne(d => d.Room)
-                    .WithMany(p => p.RoomDevices)
-                    .HasForeignKey(d => d.RoomId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Room_Device_Room");
-            });
-
             modelBuilder.Entity<RoomType>(entity =>
             {
                 entity.ToTable("Room_Type");
 
                 entity.Property(e => e.QuantityBed).HasColumnName("Quantity_Bed");
-
-                entity.Property(e => e.QuantityPeople).HasColumnName("Quantity_People");
 
                 entity.Property(e => e.RoomTypeName).HasMaxLength(50);
             });
@@ -230,11 +191,6 @@ namespace Hotel_Management.UI.Models
                 entity.Property(e => e.Password).HasMaxLength(50);
 
                 entity.Property(e => e.UserName).HasMaxLength(50);
-
-                entity.HasOne(d => d.Company)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.CompanyId)
-                    .HasConstraintName("FK_User_Company");
 
                 entity.HasOne(d => d.Department)
                     .WithMany(p => p.Users)

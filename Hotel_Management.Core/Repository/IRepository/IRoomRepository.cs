@@ -7,5 +7,7 @@ namespace Hotel_Management.Core.Repository.IRepository
     {
         IEnumerable<Room> FindRoomByFloor(int FloorId);
         String GetColorByStatus(int StatusId);
+        IEnumerable<Room> GetCustomerByRoom();
+        Room GetPrice(int RoomId);
     }
 }

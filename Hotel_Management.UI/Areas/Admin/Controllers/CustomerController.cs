@@ -1,10 +1,12 @@
 ﻿using Hotel_Management.Core.Repository.UnitOfWork;
 using Hotel_Management.UI.Areas.Admin.Models;
 using Hotel_Management.UI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotel_Management.UI.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Area("Admin")]
     public class CustomerController : Controller
     {

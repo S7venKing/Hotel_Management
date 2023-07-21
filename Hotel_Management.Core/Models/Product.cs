@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Hotel_Management.UI.Models
+﻿namespace Hotel_Management.UI.Models
 {
     public partial class Product
     {
-        public Product()
-        {
-            Bookings = new HashSet<Booking>();
-        }
-
         public int ProductId { get; set; }
-        public string? ProductName { get; set; }
-        public double? Price { get; set; }
+        public string ProductName { get; set; } = null!;
+        public double Price { get; set; }
+        public int? BookingId { get; set; }
+        public string Image { get; set; } = null!;
 
-        public virtual ICollection<Booking> Bookings { get; set; }
+
+        public virtual Booking? Booking { get; set; }
     }
 }

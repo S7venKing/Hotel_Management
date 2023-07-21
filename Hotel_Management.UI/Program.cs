@@ -1,5 +1,7 @@
 using Hotel_Management.Core.Repository.UnitOfWork;
 using Hotel_Management.UI.Areas.Identity.Data;
+using Hotel_Management.UI.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,11 +11,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultString");
-builder.Services.AddDbContext<Hotel_Management.UI.Areas.Identity.Data.HotelManagementContext>(options =>
+builder.Services.AddDbContext<Hotel_ManagementUIContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<Hotel_ManagementUIUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<Hotel_Management.UI.Areas.Identity.Data.HotelManagementContext>();
+    .AddRoles<IdentityRole>().AddEntityFrameworkStores<Hotel_ManagementUIContext>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

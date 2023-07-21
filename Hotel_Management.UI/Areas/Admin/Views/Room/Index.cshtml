@@ -53,8 +53,8 @@
                                 @Html.DisplayFor(modelItem => item.RoomType.RoomTypeName)
                             </td>
                             <td>
-                                <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.RoomId">Edit</a> |
-                                <a class="btn btn-outline-warning" asp-action="Details" asp-route-id="@item.RoomId">Details</a> |
+                                <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.RoomId">Edit</a> 
+                                <a class="btn btn-outline-warning" asp-action="Details" asp-route-id="@item.RoomId">Details</a> 
                                 <a class="btn btn-outline-danger" onclick="return confirm('Are you sure to detele');" asp-action="Delete" asp-route-id="@item.RoomId">Delete</a>
                             </td>
                         </tr>

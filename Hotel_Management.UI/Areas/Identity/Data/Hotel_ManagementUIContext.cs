@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hotel_Management.UI.Areas.Identity.Data;
+namespace Hotel_Management.UI.Data;
 
-public class HotelManagementContext : IdentityDbContext<Hotel_ManagementUIUser>
+public class Hotel_ManagementUIContext : IdentityDbContext<Hotel_ManagementUIUser>
 {
-    public HotelManagementContext(DbContextOptions<HotelManagementContext> options)
+    public Hotel_ManagementUIContext(DbContextOptions<Hotel_ManagementUIContext> options)
         : base(options)
     {
     }

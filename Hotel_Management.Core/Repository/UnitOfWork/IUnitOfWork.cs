@@ -10,7 +10,6 @@ namespace Hotel_Management.Core.Repository.UnitOfWork
         IRoomTypeRepository RoomTypeRepository { get; }
         IBookingRepository BookingRepository { get; }
         IProductRepository ProductRepository { get; }
-        IDeviceRepository DeviceRepository { get; }
         IRoomRepository RoomRepository { get; }
         ICustomerRepository CustomerRepository { get; }
         IStatusRepository StatusRepository { get; }
